@@ -1,0 +1,22 @@
+- hosts: DataNode
+  tasks:
+          - name: "Install httpd Server"
+            package:
+                    name: "httpd"
+                    state: present
+          - name: "Copy the web pages"
+            copy:
+                    src: "/root/ansible_ws/index.html"
+                    dest: "/var/www/html/index.html"
+
+            register: copy_task
+          - name: "Start Services"
+            service:
+                    name: "httpd"
+                    state: started
+            register: current_state
+          - name: "restart services"
+            service:
+                    name: "httpd"
+                    state: restarted
+            when: ( copy_task.changed ==true and current_state.changed ==false)
