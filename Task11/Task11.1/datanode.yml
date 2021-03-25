@@ -1,0 +1,29 @@
+- hosts: DataNode
+  tasks:     
+          - name: Install Hadoop"
+            command: "rpm -i hadoop-1.2.1-1.x86_64.rpm --force"
+
+          - name: "Install Jdk"
+            command: "rpm -i jdk-8u281-linux-x64.rpm "
+        
+          - name: Configure hdfs-site.xml
+            blockinfile: 
+                    path: /etc/hadoop/hdfs-site.xml
+                    insertafter: ",<configuration>"
+                    block:
+                            <property>
+                            <name>dfs.data.dir</name>
+                            <value>/dn</value>
+                            </property>
+          - name: Configure core-site.xml
+            blockinfile: 
+                    path: /etc/hadoop/core-site.xml
+                    insertafter: ",<configuration>"
+                    block:
+                            <property>
+                            <name>fs.default.name</name>
+                            <value>hdfs://192.168.31.181:9001</value>
+                            </property>
+
+          - name: Start Hadoop Service
+            command: "hadoop-daemon.sh start datanode"
